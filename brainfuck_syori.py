@@ -87,6 +87,11 @@ class Interpret(Transformer):
         elif(len(args) == 2):
             return composition(args[0], args[1])
 
+label_number = 0
+def get_label_number():
+    global label_number
+    label_number += 1
+    return label_number
 
 class Compile(Transformer):
     """aaa"""
@@ -94,19 +99,29 @@ class Compile(Transformer):
         instruct = args[0]
         if(args[0] == "+"):
             s="""
-    inc  [RBX]
+    mov rbx,1
+    add [rax],rbx
             """
         elif (args[0] == "-"):
             s="""
-    dec  [RBX]
+    mov rbx,1
+    sub [rax],rbx
             """
         elif (args[0] == "<"):
             s="""
-    dec  RBX
+    sub  rax,8
             """
         elif (args[0] == ">"):
             s="""
-    inc  RBX
+    add  rax,8
+            """
+        elif (args[0] == "."):
+            s="""
+    mov rax, 1
+    mov edx, 0x1
+    mov rsi,rbx
+    mov edi,0x1
+    syscall
             """
         return s
     def inst(self, args):
@@ -115,9 +130,14 @@ class Compile(Transformer):
     def loop(self, args):
         s = """
 .Lbegin{0}:
-.Lend{1}:
+    mov rbx, 0
+    cmp [rax], rbx
+    je .Lend{0}
+    {1}
+    jmp .Lbegin{0}
+.Lend{0}:
         """
-        return (s.format(args[0]))
+        return s.format(get_label_number(), args[0])
     def program(self, args):
         #print("program: ", args)
         #assert tree.data == "+"
@@ -161,18 +181,21 @@ def bf_intepreter(tree):
 def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
+.comm	tape,4000,32
 .global main
 main:
-    mov rax, {0}
+    mov rax, 0
+    lea rax, tape
+    {0}
+    mov rax, [rax]
     ret
-    """.format("2434")
-    assembly = Compile().transform(tree)
-    print(assembly)
+    """
+    main_code = Compile().transform(tree)
     with open("out.s", mode="w") as f:
-        f.write(s)
+        f.write(s.format(main_code, input("入力")))
     import subprocess
     # gcc が必要
-    subprocess.run("gcc -o out out.s".split(" "))
+    subprocess.run("gcc -static -o out out.s".split(" "))
 
 #bf_intepreter(bf_parser())
 bf_compiler(bf_parser())
