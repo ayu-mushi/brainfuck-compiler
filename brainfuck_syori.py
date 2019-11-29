@@ -100,28 +100,35 @@ class Compile(Transformer):
         if(args[0] == "+"):
             s="""
     mov rbx,1
-    add [rax],rbx
+    add [r8],rbx
             """
         elif (args[0] == "-"):
             s="""
     mov rbx,1
-    sub [rax],rbx
+    sub [r8],rbx
             """
         elif (args[0] == "<"):
             s="""
-    sub  rax,8
+    sub  r8,8
             """
         elif (args[0] == ">"):
             s="""
-    add  rax,8
+    add  r8,8
             """
         elif (args[0] == "."):
             s="""
     mov rax, 1
     mov edx, 0x1
-    mov rsi,rbx
+    mov rsi,r8
     mov edi,0x1
     syscall
+            """
+
+        elif (args[0] == ","):
+            s="""
+    #mov rbx, [r10]
+    #mov [r8], rbx
+    #add r10, 8
             """
         return s
     def inst(self, args):
@@ -131,7 +138,7 @@ class Compile(Transformer):
         s = """
 .Lbegin{0}:
     mov rbx, 0
-    cmp [rax], rbx
+    cmp [r8], rbx
     je .Lend{0}
     {1}
     jmp .Lbegin{0}
@@ -182,12 +189,23 @@ def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
 .comm	tape,4000,32
+.comm	input1,40,8
 .global main
 main:
-    mov rax, 0
-    lea rax, tape
+    mov r8, 0
+    lea r8, tape
+
+    # input
+    mov r10, 0
+    lea r10, input1
+    mov rax, 0              # specify read system call
+    mov edx, 1            # 3nd argument (count)
+    mov rsi, input1              # 2nd argument (string pointer)
+    mov edi, 0x0            # 1st argument (stdout)
+    syscall
+
     {0}
-    mov rax, [rax]
+    mov rax, [r10]
     ret
     """
     main_code = Compile().transform(tree)

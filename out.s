@@ -1,71 +1,32 @@
 
 .intel_syntax noprefix
 .comm	tape,4000,32
+.comm	input1,40,8
 .global main
 main:
-    mov rax, 0
-    lea rax, tape
+    mov r8, 0
+    lea r8, tape
+
+    # input
+    mov r10, input1
+    mov rax, 0              # specify read system call
+    mov edx, 1            # 3nd argument (count)
+    mov rsi, input1              # 2nd argument (string pointer)
+    mov edi, 0x0            # 1st argument (stdout)
+    syscall
+
     
-    mov rbx,1
-    add [rax],rbx
+    #mov rbx, [r10]
+    #mov [r8], rbx
+    #add r10, 8
             
 
-    mov rbx,1
-    add [rax],rbx
+    mov rax, 1
+    mov edx, 0x1
+    mov rsi,r8
+    mov edi,0x1
+    syscall
             
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-.Lbegin1:
-    mov rbx, 0
-    cmp [rax], rbx
-    je .Lend1
-    
-    mov rbx,1
-    sub [rax],rbx
-            
-
-    add  rax,8
-            
-
-    mov rbx,1
-    add [rax],rbx
-            
-
-    sub  rax,8
-            
-    jmp .Lbegin1
-.Lend1:
-        
-
-    add  rax,8
-            
-    mov rax, [rax]
+    mov rax, [r10]
     ret
     
