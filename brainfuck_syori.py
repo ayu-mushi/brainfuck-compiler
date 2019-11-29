@@ -88,7 +88,46 @@ class Interpret(Transformer):
             return composition(args[0], args[1])
 
 
-def bf_intepreter():
+class Compile(Transformer):
+    """aaa"""
+    def atomic_inst(self, args):
+        instruct = args[0]
+        if(args[0] == "+"):
+            s="""
+    inc  [RBX]
+            """
+        elif (args[0] == "-"):
+            s="""
+    dec  [RBX]
+            """
+        elif (args[0] == "<"):
+            s="""
+    dec  RBX
+            """
+        elif (args[0] == ">"):
+            s="""
+    inc  RBX
+            """
+        return s
+    def inst(self, args):
+        return args[0]
+
+    def loop(self, args):
+        s = """
+.Lbegin{0}:
+.Lend{1}:
+        """
+        return (s.format(args[0]))
+    def program(self, args):
+        #print("program: ", args)
+        #assert tree.data == "+"
+        #print(tree.children[0].children[0])
+        if(len(args) == 1):
+            return args[0]
+        elif(len(args) == 2):
+            return args[0] + "\n" + args[1]
+
+def bf_parser():
     try:
         #program = open("program2.bf").read()
         try:
@@ -103,18 +142,23 @@ def bf_intepreter():
 
         tree = parser.parse(program)
 
-        state = createState(100)
-        executable = Interpret().transform(tree)
-        executable(state)
+        return tree
 
-        print("", state.show_state())
-        print("output:", state.show_result())
-
-    except exceptions.UnexpectedCharacters:
-        print("予期しない文字が含まれています")
+    except exceptions.UnexpectedCharacters as e:
+        print("予期しない文字が含まれています:")
+        print(e)
+        raise exceptions.UnexpectedCharacters
 
 
-def bf_compiler():
+def bf_intepreter(tree):
+    state = createState(100)
+    executable = Interpret().transform(tree)
+    executable(state)
+
+    print("", state.show_state())
+    print("output:", state.show_result())
+
+def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
 .global main
@@ -122,11 +166,13 @@ main:
     mov rax, {0}
     ret
     """.format("2434")
+    assembly = Compile().transform(tree)
+    print(assembly)
     with open("out.s", mode="w") as f:
         f.write(s)
     import subprocess
     # gcc が必要
     subprocess.run("gcc -o out out.s".split(" "))
 
-bf_compiler()
-#print(tree)
+#bf_intepreter(bf_parser())
+bf_compiler(bf_parser())
