@@ -126,9 +126,9 @@ class Compile(Transformer):
 
         elif (args[0] == ","):
             s="""
-    #mov rbx, [r10]
-    #mov [r8], rbx
-    #add r10, 8
+    mov rbx, [r10]
+    mov [r8], rbx
+    add r10, 0x8
             """
         return s
     def inst(self, args):
@@ -189,18 +189,18 @@ def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
 .comm	tape,4000,32
-.comm	input1,40,8
+.comm	input1,40,32
 .global main
 main:
     mov r8, 0
     lea r8, tape
 
-    # input
     mov r10, 0
     lea r10, input1
+
     mov rax, 0              # specify read system call
-    mov edx, 1            # 3nd argument (count)
-    mov rsi, input1              # 2nd argument (string pointer)
+    mov edx, 1024            # 3nd argument (count)
+    mov rsi, r10              # 2nd argument (string pointer)
     mov edi, 0x0            # 1st argument (stdout)
     syscall
 
