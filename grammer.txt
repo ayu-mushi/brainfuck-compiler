@@ -1,0 +1,27 @@
+start: program
+
+program: inst program | inst
+
+atomic_inst: PLUS
+    | MINUS
+    | LEFT
+    | RIGHT
+    | OUTPUT
+    | INPUT
+
+inst: atomic_inst | loop
+
+PLUS: "+"
+MINUS: "-"
+LEFT: "<"
+RIGHT: ">"
+OUTPUT: "."
+INPUT: ","
+
+loop: "[" program "]"
+
+COMMENT : "//" /(.)+/ "\n"
+
+%ignore " "
+%ignore "\n"
+%ignore COMMENT
