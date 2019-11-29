@@ -1,7 +1,7 @@
 
 .intel_syntax noprefix
 .comm	tape,4000,32
-.comm	input1,40,32
+.comm	input1,4000,32
 .global main
 main:
     mov r8, 0
@@ -21,6 +21,74 @@ main:
     add [r8],rbx
             
 
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
 .Lbegin1:
     mov rbx, 0
     cmp [r8], rbx
@@ -28,7 +96,7 @@ main:
     
     mov rbx, [r10]
     mov [r8], rbx
-    add r10, 0x8
+    add r10, 1
             
 
     mov rax, 1
@@ -37,9 +105,14 @@ main:
     mov edi,0x1
     syscall
             
+
+    mov rbx,1
+    sub [r8],rbx
+            
     jmp .Lbegin1
 .Lend1:
         
-    mov rax, [r10]
+
+    mov rax, [r8]
     ret
     

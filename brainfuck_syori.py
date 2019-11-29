@@ -128,7 +128,7 @@ class Compile(Transformer):
             s="""
     mov rbx, [r10]
     mov [r8], rbx
-    add r10, 0x8
+    add r10, 1
             """
         return s
     def inst(self, args):
@@ -189,7 +189,7 @@ def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
 .comm	tape,4000,32
-.comm	input1,40,32
+.comm	input1,4000,32
 .global main
 main:
     mov r8, 0
@@ -205,15 +205,18 @@ main:
     syscall
 
     {0}
-    mov rax, [r10]
+
+    mov rax, [r8]
     ret
     """
     main_code = Compile().transform(tree)
     with open("out.s", mode="w") as f:
-        f.write(s.format(main_code, input("入力")))
+        f.write(s.format(main_code))
     import subprocess
     # gcc が必要
+    print("※何か入れてリターンを押すと実行されます")
     subprocess.run("gcc -static -o out out.s".split(" "))
+    subprocess.run("./out")
 
 #bf_intepreter(bf_parser())
 bf_compiler(bf_parser())
