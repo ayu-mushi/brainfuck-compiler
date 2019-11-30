@@ -11,14 +11,29 @@ main:
     lea r10, input1
 
     mov rax, 0              # specify read system call
-    mov edx, 1024            # 3nd argument (count)
+    mov edx, 2000            # 3nd argument (count)
     mov rsi, r10              # 2nd argument (string pointer)
     mov edi, 0x0            # 1st argument (stdout)
     syscall
 
-    
+
     mov rbx,1
     add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    add  r8,8
             
 
     mov rbx,1
@@ -37,52 +52,19 @@ main:
     add [r8],rbx
             
 
-    mov rbx,1
-    add [r8],rbx
+    sub  r8,8
             
 
-    mov rbx,1
-    add [r8],rbx
-            
+.Lbegin2:
+    mov rbx, 0
+    cmp [r8], rbx
+    je .Lend2
 
     mov rbx,1
-    add [r8],rbx
+    sub [r8],rbx
             
 
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
+    add  r8,8
             
 
     mov rbx,1
@@ -93,25 +75,35 @@ main:
     mov rbx, 0
     cmp [r8], rbx
     je .Lend1
-    
-    mov rbx, [r10]
-    mov [r8], rbx
-    add r10, 1
-            
-
-    mov rax, 1
-    mov edx, 0x1
-    mov rsi,r8
-    mov edi,0x1
-    syscall
-            
 
     mov rbx,1
     sub [r8],rbx
             
+
+    add  r8,8
+            
+
+    mov rbx,1
+    add [r8],rbx
+            
+
+    sub  r8,8
+            
     jmp .Lbegin1
 .Lend1:
         
+
+    sub  r8,8
+            
+    jmp .Lbegin2
+.Lend2:
+        
+
+    add  r8,8
+            
+
+    add  r8,8
+            
 
     mov rax, [r8]
     ret

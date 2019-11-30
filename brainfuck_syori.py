@@ -1,11 +1,16 @@
 #!/usr/bin/python3
 # coding: utf-8
-# Brainfuckインタプリタを作成した。
-# gccがsubprocessから実行できることが必要(Linux推奨)
+# Brainfuckインタプリタ と コンパイラをそれぞれ作成した。
+# コンパイラはgccがsubprocessから実行できることが必要(Linux推奨)
+# 参考: https://www.sigbus.info/compilerbook
+# : http://warabanshi.hatenablog.com/entry/2013/01/02/222046 
+# GAS Intel Syntax
 
 from lark import Tree, Transformer, Visitor, exceptions
 from lark import Lark
 # pip install lark-parser
+import sys
+sys.setrecursionlimit(10000)
 
 class State():
     def __init__(self, n, input_code):
@@ -140,7 +145,7 @@ class Compile(Transformer):
     mov rbx, 0
     cmp [r8], rbx
     je .Lend{0}
-    {1}
+{1}
     jmp .Lbegin{0}
 .Lend{0}:
         """
@@ -158,14 +163,13 @@ def bf_parser():
     try:
         #program = open("program2.bf").read()
         try:
-            program = open(input("ファイル名を入力(デフォルトはprogram.bf): ")).read()
+            program = open(input("ファイル名を入力(デフォルトはhello_world.bf): ")).read()
         except FileNotFoundError:
-            print("program.bf")
-            program = open("program.bf").read()
+            print("hello_world.bf")
+            program = open("hello_world.bf").read()
         rule = open("grammer.txt").read()
 
         parser = Lark(rule, start="program", parser="lalr")
-
 
         tree = parser.parse(program)
 
@@ -177,6 +181,8 @@ def bf_parser():
         raise exceptions.UnexpectedCharacters
 
 
+
+#インタプリタ
 def bf_intepreter(tree):
     state = createState(100)
     executable = Interpret().transform(tree)
@@ -185,6 +191,8 @@ def bf_intepreter(tree):
     print("", state.show_state())
     print("output:", state.show_result())
 
+
+#コンパイラ
 def bf_compiler(tree):
     s = """
 .intel_syntax noprefix
@@ -199,12 +207,12 @@ main:
     lea r10, input1
 
     mov rax, 0              # specify read system call
-    mov edx, 1024            # 3nd argument (count)
+    mov edx, 2000            # 3nd argument (count)
     mov rsi, r10              # 2nd argument (string pointer)
     mov edi, 0x0            # 1st argument (stdout)
     syscall
 
-    {0}
+{0}
 
     mov rax, [r8]
     ret
@@ -214,9 +222,12 @@ main:
         f.write(s.format(main_code))
     import subprocess
     # gcc が必要
-    print("※何か入れてリターンを押すと実行されます")
+    print("※何か入れてリターンを押すと実行されます: ")
     subprocess.run("gcc -static -o out out.s".split(" "))
     subprocess.run("./out")
 
+#インタプリタを使う
 #bf_intepreter(bf_parser())
+
+#コンパイラを使う
 bf_compiler(bf_parser())

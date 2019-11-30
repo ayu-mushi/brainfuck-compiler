@@ -20,7 +20,7 @@ INPUT: ","
 
 loop: "[" program "]"
 
-COMMENT : "//" /(.)+/ "\n"
+COMMENT : "//" /(.)+/ "\n" |  "#" /(.)+/ "\n"
 
 %ignore " "
 %ignore "\n"
