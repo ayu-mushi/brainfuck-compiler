@@ -17,58 +17,20 @@ main:
     syscall
 
 
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
+    mov rbx, [r10]
+    mov [r8], rbx
+    add r10, 1
             
 
     add  r8,8
             
 
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
-            
-
-    mov rbx,1
-    add [r8],rbx
+    mov rbx, [r10]
+    mov [r8], rbx
+    add r10, 1
             
 
     sub  r8,8
-            
-
-.Lbegin2:
-    mov rbx, 0
-    cmp [r8], rbx
-    je .Lend2
-
-    mov rbx,1
-    sub [r8],rbx
-            
-
-    add  r8,8
-            
-
-    mov rbx,1
-    add [r8],rbx
             
 
 .Lbegin1:
@@ -93,16 +55,14 @@ main:
 .Lend1:
         
 
-    sub  r8,8
-            
-    jmp .Lbegin2
-.Lend2:
-        
-
     add  r8,8
             
 
-    add  r8,8
+    mov rax, 1
+    mov edx, 0x1
+    mov rsi,r8
+    mov edi,0x1
+    syscall
             
 
     mov rax, [r8]
